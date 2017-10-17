@@ -563,10 +563,9 @@ export class ValidationService {
                 return;
             }
 
-            e.preventDefault();
             validate.then(success => {
-                if (success) {
-                    form.submit();
+                if (!success) {
+                    e.preventDefault();
                 }
             }).catch(error => {
                 console.log(error);
