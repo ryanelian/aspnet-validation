@@ -428,6 +428,7 @@ var MvcValidationProviders = /** @class */ (function () {
  */
 var ValidationService = /** @class */ (function () {
     function ValidationService() {
+        var _this = this;
         /**
          * A key-value collection of loaded validation plugins.
          */
@@ -464,6 +465,18 @@ var ValidationService = /** @class */ (function () {
          * In milliseconds, the rate of fire of the input validation.
          */
         this.debounce = 300;
+        /**
+         * Fires off validation for elements within the provided form and then calls the callback
+         * @param form
+         * @param callback
+         */
+        this.validateForm = function (form, callback) {
+            var formUID = _this.getElementUID(form);
+            var formValidationEvent = _this.elementEvents[formUID];
+            if (formValidationEvent) {
+                formValidationEvent(null, callback);
+            }
+        };
     }
     /**
      * Registers a new validation plugin of the given name, if not registered yet.
@@ -625,15 +638,26 @@ var ValidationService = /** @class */ (function () {
         if (this.elementEvents[formUID]) {
             return;
         }
-        var cb = function (e) {
+        var cb = function (e, callback) {
             var validate = _this.getFormValidationTask(formUID);
             if (!validate) {
                 return;
             }
-            e.preventDefault();
+            var isProgamaticValidate = !e;
+            if (!isProgamaticValidate) {
+                e.preventDefault();
+            }
             validate.then(function (success) {
                 if (success) {
+                    if (isProgamaticValidate) {
+                        callback(true);
+                        return;
+                    }
                     form.submit();
+                    return;
+                }
+                if (isProgamaticValidate) {
+                    callback(false);
                 }
             }).catch(function (error) {
                 console.log(error);
