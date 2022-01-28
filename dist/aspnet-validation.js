@@ -108,10 +108,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MvcValidationProviders", function() { return MvcValidationProviders; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ValidationService", function() { return ValidationService; });
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -790,7 +791,7 @@ var ValidationService = /** @class */ (function () {
     ValidationService.prototype.createValidator = function (input, directives) {
         var _this = this;
         return function () { return __awaiter(_this, void 0, void 0, function () {
-            var _a, _b, _i, key, directive, provider, result, valid, error, resolution;
+            var _a, _b, _i, key, directive, provider, result, valid, error, resolution, ex_1;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -800,26 +801,28 @@ var ValidationService = /** @class */ (function () {
                         _i = 0;
                         _c.label = 1;
                     case 1:
-                        if (!(_i < _a.length)) return [3 /*break*/, 7];
+                        if (!(_i < _a.length)) return [3 /*break*/, 8];
                         key = _a[_i];
                         directive = directives[key];
                         provider = this.providers[key];
                         if (!provider) {
                             console.log('aspnet-validation provider not implemented: ' + key);
-                            return [3 /*break*/, 6];
+                            return [3 /*break*/, 7];
                         }
                         result = provider(input.value, input, directive.params);
                         valid = false;
                         error = directive.error;
                         if (!(typeof result === 'boolean')) return [3 /*break*/, 2];
                         valid = result;
-                        return [3 /*break*/, 5];
+                        return [3 /*break*/, 6];
                     case 2:
                         if (!(typeof result === 'string')) return [3 /*break*/, 3];
                         valid = false;
                         error = result;
-                        return [3 /*break*/, 5];
-                    case 3: return [4 /*yield*/, result];
+                        return [3 /*break*/, 6];
+                    case 3:
+                        _c.trys.push([3, 5, , 6]);
+                        return [4 /*yield*/, result];
                     case 4:
                         resolution = _c.sent();
                         if (typeof resolution === 'boolean') {
@@ -829,17 +832,26 @@ var ValidationService = /** @class */ (function () {
                             valid = false;
                             error = resolution;
                         }
-                        _c.label = 5;
+                        return [3 /*break*/, 6];
                     case 5:
+                        ex_1 = _c.sent();
+                        if (ex_1 instanceof Error) {
+                            error = ex_1.message;
+                        }
+                        else
+                            error = ex_1;
+                        valid = false;
+                        return [3 /*break*/, 6];
+                    case 6:
                         if (!valid) {
                             this.addError(input, error);
                             return [2 /*return*/, false];
                         }
-                        _c.label = 6;
-                    case 6:
+                        _c.label = 7;
+                    case 7:
                         _i++;
                         return [3 /*break*/, 1];
-                    case 7:
+                    case 8:
                         this.removeError(input);
                         return [2 /*return*/, true];
                 }

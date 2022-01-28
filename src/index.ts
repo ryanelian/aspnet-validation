@@ -814,12 +814,20 @@ export class ValidationService {
                     valid = false;
                     error = result;
                 } else {
-                    let resolution = await result;
-                    if (typeof resolution === 'boolean') {
-                        valid = resolution;
-                    } else {
+                    try {
+                        let resolution = await result;
+                        if (typeof resolution === 'boolean') {
+                            valid = resolution;
+                        } else {
+                            valid = false;
+                            error = resolution;
+                        }
+                    } catch (ex) {
+                        if (ex instanceof Error) {
+                            error = ex.message;
+                        }
+                        else error = ex;
                         valid = false;
-                        error = resolution;
                     }
                 }
 
